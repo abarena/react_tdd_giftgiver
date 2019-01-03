@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {Button} from 'react-bootstrap'
+import Gift from "./Gift";
+import {max_number} from "../helper";
 
 export default class App extends Component {
   static propTypes = {
@@ -11,20 +13,30 @@ export default class App extends Component {
 
   addGift = () => {
     const { gifts } = this.state;
-    const ids = gifts.map(gift => gift.id);
-    const max_id = ids.length > 0 ? Math.max(...ids) : 0;
-    gifts.push({id: max_id+1});
+    gifts.push({id: max_number(gifts.map(gift => gift.id))+1});
     this.setState({gifts})
+  }
 
+  removeGift = id => {
+    const gifts = this.state.gifts.filter(gift => gift.id !== id);
+    this.setState({gifts});
   }
 
   render() {
     return (
-      <div>
+      <div className="gift">
         <h2>Gift giver</h2>
         <div className="gift-list">
           {
-            this.state.gifts.map(gift => <div key={gift.id}></div>)
+            this.state.gifts.map(gift => {
+              return (
+                <Gift 
+                  key={gift.id}
+                  gift={gift}
+                  removeGift={this.removeGift}
+                />
+              );
+            })
           }
         </div>
         <Button className="btn-add" onClick={this.addGift}>Add Gift</Button>
